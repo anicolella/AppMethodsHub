@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071739">
+  <meta name="description" content="Livros, cursos e ferramentas de métodos quantitativos aplicados à economia, ao direito e às políticas públicas.">
+  <title>Applied Methods Hub | Alexandre Nicolella</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="assets/monograma-negativo.svg" type="image/svg+xml">
+</head>
+<body>
+  <div class="reading-progress" aria-hidden="true"><span id="progress"></span></div>
+  <header class="site-header" id="top">
+    <div class="brand">
+      <button class="brand-signature brand-video-trigger" type="button" data-open-video aria-label="Assistir ao vídeo de apresentação de Alexandre Nicolella">
+        <img src="assets/marca-horizontal-negativa.svg" alt="Alexandre Nicolella, Economia Aplicada à FEA-RP/USP">
+      </button>
+      <span class="brand-divider" aria-hidden="true"></span>
+      <a class="brand-hub" href="#top">Applied<br>Methods Hub</a>
+    </div>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Abrir menu">
+      <span></span><span></span>
+    </button>
+    <nav class="main-nav" id="main-nav" aria-label="Navegação principal">
+      <a href="#materiais">Materiais</a>
+      <a href="#proximos">Cursos e ferramentas</a>
+      <a href="#sobre">Sobre o hub</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy reveal in">
+        <p class="eyebrow"><span class="eyebrow-mark"></span> Economia aplicada · Dados · Métodos</p>
+        <h1 id="hero-title">Da pergunta<br>ao <span>modelo.</span></h1>
+        <p class="hero-lede">Métodos quantitativos para compreender problemas em economia, direito e políticas públicas.</p>
+        <a class="button button-light" href="#materiais">Explore os materiais</a>
+        <p class="hero-note">Livros, cursos e ferramentas para trabalhar com dados.</p>
+        <div class="method-sequence" aria-label="Etapas: realidade, pergunta, evidência, método, modelo e interpretação">
+          <span>Realidade</span><span>Pergunta</span><span>Evidência</span><span>Método</span><span>Modelo</span><span>Interpretação</span>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="Animação abstrata: observar a realidade, formular uma pergunta, reunir evidências e construir um modelo">
+        <canvas id="particle-field" aria-hidden="true"></canvas>
+        <div class="question-mark" aria-hidden="true">?</div>
+        <div class="visual-caption" aria-hidden="true">
+          <span class="caption-line"></span>
+          <span id="phase-label">OBSERVAR A REALIDADE</span>
+        </div>
+      <div class="visual-footnote" aria-hidden="true">REALIDADE / PERGUNTA / EVIDÊNCIA / MODELO</div>
+      </div>
+      <div class="hero-bottom" aria-hidden="true"><span>01</span><span class="hero-bottom-line"></span><span>Conhecimento em construção</span></div>
+    </section>
+
+    <section class="intro section-wrap reveal" id="materiais">
+      <div class="section-kicker">Biblioteca</div>
+      <div class="intro-content">
+        <h2>A pergunta orienta o percurso entre realidade, evidências e método.</h2>
+        <p>Os materiais deste hub ajudam a percorrer esse caminho com clareza, rigor e atenção ao que os dados permitem compreender.</p>
+      </div>
+      <div class="intro-motion" aria-label="Animação conceitual: pontos dispersos se organizam em evidência">
+        <canvas id="library-particle-field" aria-hidden="true"></canvas>
+        <div class="intro-motion-caption" aria-hidden="true"><span></span><b id="library-phase-label">OBSERVAR</b></div>
+      </div>
+    </section>
+
+    <section class="library section-wrap" aria-label="Livros disponíveis">
+      <div class="section-heading reveal">
+        <div>
+          <p class="eyebrow eyebrow-dark">Livros e materiais</p>
+          <h2>Explore a biblioteca</h2>
+        </div>
+        <p class="section-count"><span>04</span> títulos disponíveis</p>
+      </div>
+      <div class="book-grid stagger">
+        <a class="book-card" href="https://anicolella.github.io/IntroducaoR/" target="_blank" rel="noreferrer">
+          <div class="card-topline"><span class="card-index">01</span><span class="card-type">LIVRO · R</span></div>
+          <div class="card-graphic graphic-r" aria-hidden="true"><span>R</span><i></i><b></b></div>
+          <div class="card-copy"><h3>Introdução à R</h3><p>Uma introdução à linguagem R e ao trabalho com dados.</p></div>
+          <div class="card-bottom"><span>Acessar o livro</span><span class="card-dot" aria-hidden="true"></span></div>
+        </a>
+        <a class="book-card" href="https://anicolella.github.io/AvaliacaoPoliticas_Pos/" target="_blank" rel="noreferrer">
+          <div class="card-topline"><span class="card-index">02</span><span class="card-type">LIVRO · POLÍTICAS PÚBLICAS</span></div>
+          <div class="card-graphic graphic-policy" aria-hidden="true"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><i></i></div>
+          <div class="card-copy"><h3>Avaliação de Políticas</h3><p>Métodos quantitativos para analisar políticas e programas públicos.</p></div>
+          <div class="card-bottom"><span>Acessar o livro</span><span class="card-dot" aria-hidden="true"></span></div>
+        </a>
+        <a class="book-card" href="https://anicolella.github.io/Estatistica/" target="_blank" rel="noreferrer">
+          <div class="card-topline"><span class="card-index">03</span><span class="card-type">LIVRO · ESTATÍSTICA</span></div>
+          <div class="card-graphic graphic-normal" aria-hidden="true"><svg viewBox="0 0 300 130"><path class="mini-axis" d="M18 108H282"/><path class="mini-normal-curve" d="M20 106 C65 106 76 91 104 63 C122 45 135 24 150 22 C165 24 178 45 196 63 C224 91 235 106 280 106"/><g><circle cx="49" cy="97" r="3"/><circle cx="82" cy="82" r="3"/><circle cx="108" cy="62" r="3"/><circle cx="131" cy="42" r="3"/><circle cx="151" cy="27" r="3"/><circle cx="172" cy="44" r="3"/><circle cx="194" cy="63" r="3"/><circle cx="220" cy="82" r="3"/><circle cx="251" cy="96" r="3"/></g></svg></div>
+          <div class="card-copy"><h3>Estatística</h3><p>Conceitos e ferramentas estatísticas para analisar dados.</p></div>
+          <div class="card-bottom"><span>Acessar o livro</span><span class="card-dot" aria-hidden="true"></span></div>
+        </a>
+        <a class="book-card" href="https://jurimetria-usp.github.io/livro/" target="_blank" rel="noreferrer">
+          <div class="card-topline"><span class="card-index">04</span><span class="card-type">LIVRO · JURIMETRIA</span></div>
+          <div class="card-graphic graphic-survival" aria-hidden="true"><svg viewBox="0 0 300 130"><path class="mini-axis" d="M24 18V108H282"/><path class="mini-survival-step" d="M25 28H68V39H103V53H139V67H173V80H207V91H244V101H280"/><g><circle cx="68" cy="39" r="3"/><circle cx="103" cy="53" r="3"/><circle cx="139" cy="67" r="3"/><circle cx="173" cy="80" r="3"/><circle cx="207" cy="91" r="3"/><circle cx="244" cy="101" r="3"/></g></svg></div>
+          <div class="card-copy"><h3>Jurimetria</h3><p>Métodos e dados aplicados ao estudo do direito.</p></div>
+          <div class="card-bottom"><span>Acessar o livro</span><span class="card-dot" aria-hidden="true"></span></div>
+        </a>
+      </div>
+    </section>
+
+    <section class="next-section" id="proximos">
+      <div class="section-wrap next-inner reveal">
+        <div class="section-kicker">Em desenvolvimento</div>
+        <div class="next-copy">
+          <h2>O hub vai crescer junto com os materiais.</h2>
+          <p>Novos cursos e ferramentas serão incorporados à biblioteca. O próximo guia será sobre a preparação do ambiente de trabalho para análise de dados.</p>
+          <div class="next-tags"><span>Cursos</span><span>Ambiente de trabalho</span><span>Aplicações</span></div>
+        </div>
+        <div class="next-mark" aria-hidden="true"><span class="next-point"></span><span class="next-arc arc-a"></span><span class="next-arc arc-b"></span></div>
+      </div>
+    </section>
+
+    <section class="about section-wrap reveal" id="sobre">
+      <div class="about-brand"><button class="about-brand-button brand-video-trigger" type="button" data-open-video aria-label="Assistir ao vídeo de apresentação de Alexandre Nicolella"><img src="assets/marca-horizontal-positiva.svg" alt="Alexandre Nicolella, Economia Aplicada à FEA-RP/USP"></button></div>
+      <div class="about-copy">
+        <p class="eyebrow eyebrow-dark">Sobre o hub</p>
+        <h2>A IA amplia a análise. A pergunta nasce da atenção à realidade.</h2>
+        <p>Trabalhamos em conjunto com a inteligência artificial. Ela amplia as possibilidades de explorar dados e modelos, mas a investigação começa na capacidade humana de observar a realidade, perceber o que importa e formular boas perguntas. A partir delas, reunimos evidências, escolhemos métodos e construímos modelos para compreender o mundo.</p>
+        <button class="watch-video brand-video-trigger" type="button" data-open-video>Assistir à apresentação em vídeo</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner section-wrap">
+      <span>Applied Methods Hub</span>
+      <button class="footer-video-trigger brand-video-trigger" type="button" data-open-video>Alexandre Nicolella · FEA-RP/USP</button>
+      <a href="#top">Voltar ao início</a>
+    </div>
+  </footer>
+  <dialog class="video-dialog" id="profile-video" aria-labelledby="video-title">
+    <div class="video-dialog-inner">
+      <div class="video-dialog-heading">
+        <div><p class="eyebrow eyebrow-dark">Apresentação</p><h2 id="video-title">Alexandre Nicolella</h2></div>
+        <button class="video-close" type="button" aria-label="Fechar vídeo" data-close-video>Fechar</button>
+      </div>
+      <video id="intro-video" controls playsinline preload="metadata" aria-label="Vídeo de apresentação de Alexandre Nicolella">
+        Seu navegador não oferece suporte à reprodução deste vídeo.
+      </video>
+      <p class="video-caption">Uma apresentação do trabalho em economia aplicada, métodos quantitativos e análise de políticas.</p>
+    </div>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>
