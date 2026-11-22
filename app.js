@@ -249,7 +249,7 @@ function startLibraryParticles() {
   let fieldStart = performance.now();
   let libraryFrame = 0;
   let libraryResizeTimer = 0;
-  const labels = ['FORMULAR A PERGUNTA', 'EXPLORAR POSSIBILIDADES', 'DEIXAR ESPAÇO', 'FORMAR UMA IDEIA'];
+  const labels = ['FORMULAR A PERGUNTA', 'OBSERVAR OS DADOS', 'ENCONTRAR UMA RELAÇÃO', 'FORMAR UMA IDEIA'];
 
   function cubicPoint(start, controlA, controlB, end, t) {
     const inverse = 1 - t;
@@ -267,10 +267,12 @@ function startLibraryParticles() {
     field.width = Math.round(fieldWidth * dpr);
     field.height = Math.round(fieldHeight * dpr);
     fieldContext.setTransform(dpr, 0, 0, dpr, 0, 0);
-    fieldPoints = Array.from({ length: Math.max(54, Math.min(78, Math.round(fieldWidth / 6))) }, (_, i) => ({
+    fieldPoints = Array.from({ length: Math.max(108, Math.min(148, Math.round(fieldWidth / 3.4))) }, (_, i) => ({
       scatterX: 22 + Math.random() * Math.max(1, fieldWidth - 44),
       scatterY: 20 + Math.random() * Math.max(1, fieldHeight - 58),
-      radius: i % 7 === 0 ? 2.5 : 1.4 + Math.random(),
+      offsetX: (Math.random() - .5) * 6,
+      offsetY: (Math.random() - .5) * 6,
+      radius: i % 9 === 0 ? 2.7 : 1.25 + Math.random() * 1.15,
       color: colors[i % colors.length]
     }));
     fieldStart = performance.now();
@@ -282,40 +284,56 @@ function startLibraryParticles() {
     if (phase === 0) {
       if (t < .85) {
         const q = t / .85;
-        if (q < .55) return cubicPoint(
+        if (q < .55) {
+          const position = cubicPoint(
           { x: fieldWidth * .35, y: fieldHeight * .31 },
           { x: fieldWidth * .35, y: fieldHeight * .08 },
           { x: fieldWidth * .68, y: fieldHeight * .08 },
           { x: fieldWidth * .68, y: fieldHeight * .31 },
           q / .55
-        );
-        return cubicPoint(
+          );
+          return { x: position.x + point.offsetX, y: position.y + point.offsetY };
+        }
+        const position = cubicPoint(
           { x: fieldWidth * .68, y: fieldHeight * .31 },
           { x: fieldWidth * .68, y: fieldHeight * .49 },
           { x: fieldWidth * .51, y: fieldHeight * .46 },
           { x: fieldWidth * .51, y: fieldHeight * .63 },
           (q - .55) / .45
         );
+        return { x: position.x + point.offsetX, y: position.y + point.offsetY };
       }
       const dotAngle = (t - .85) / .15 * Math.PI * 2;
       return { x: fieldWidth * .51 + Math.cos(dotAngle) * 5, y: fieldHeight * .77 + Math.sin(dotAngle) * 5 };
     }
     if (phase === 1) return { x: point.scatterX, y: point.scatterY };
-    if (phase === 2) return { x: centerX + (point.scatterX - centerX) * .12, y: fieldHeight * .48 + (point.scatterY - fieldHeight * .48) * .12 };
-    if (t < .62) {
-      const angle = Math.PI * .72 + (t / .62) * Math.PI * 1.56;
+    if (phase === 2) return {
+      x: 24 + t * (fieldWidth - 48),
+      y: fieldHeight * (.72 - .43 * t) + ((index % 5) - 2) * 2.1
+    };
+    if (t < .48) {
+      const angle = Math.PI * .72 + (t / .48) * Math.PI * 1.56;
       return { x: centerX + Math.cos(angle) * fieldWidth * .19, y: fieldHeight * .38 + Math.sin(angle) * fieldHeight * .23 };
     }
-    if (t < .78) {
-      const neck = (t - .62) / .16;
+    if (t < .72) {
+      const fill = (t - .48) / .24;
+      const angle = index * 2.399963;
+      const radius = Math.sqrt(fill) * fieldWidth * .145;
+      return {
+        x: centerX + Math.cos(angle) * radius,
+        y: fieldHeight * .38 + Math.sin(angle) * radius * 1.08
+      };
+    }
+    if (t < .82) {
+      const neck = (t - .72) / .1;
       const side = index % 2 === 0 ? -1 : 1;
       return { x: centerX + side * fieldWidth * (.11 - neck * .045), y: fieldHeight * (.52 + neck * .16) };
     }
-    if (t < .92) {
-      const base = (t - .78) / .14;
+    if (t < .93) {
+      const base = (t - .82) / .11;
       return { x: centerX + (base - .5) * fieldWidth * .18, y: fieldHeight * (.7 + (index % 3) * .035) };
     }
-    const ray = (t - .92) / .08 * Math.PI * 1.35 + Math.PI * .82;
+    const ray = (t - .93) / .07 * Math.PI * 1.35 + Math.PI * .82;
     return { x: centerX + Math.cos(ray) * fieldWidth * .3, y: fieldHeight * .36 + Math.sin(ray) * fieldHeight * .34 };
   }
 
@@ -334,7 +352,9 @@ function startLibraryParticles() {
       return { x: a.x + (b.x - a.x) * mix, y: a.y + (b.y - a.y) * mix };
     });
     positions.forEach((position, index) => {
-      if (index && phase === 3 && Math.hypot(position.x - positions[index - 1].x, position.y - positions[index - 1].y) < fieldWidth * .16) {
+      const previous = positions[index - 1];
+      const outlinePoint = phase === 3 && index / fieldPoints.length < .48;
+      if (index && (phase === 2 || outlinePoint) && Math.hypot(position.x - previous.x, position.y - previous.y) < fieldWidth * .16) {
         fieldContext.beginPath();
         fieldContext.moveTo(positions[index - 1].x, positions[index - 1].y);
         fieldContext.lineTo(position.x, position.y);
@@ -344,8 +364,7 @@ function startLibraryParticles() {
       fieldContext.beginPath();
       fieldContext.arc(position.x, position.y, fieldPoints[index].radius, 0, Math.PI * 2);
       fieldContext.fillStyle = ['#071739', '#A68868', '#4B6382', '#A4B5C4'][index % 4];
-      const quietAlpha = phase === 2 ? .12 + Math.abs(mix - .5) * .42 : .62;
-      fieldContext.globalAlpha = quietAlpha + .25 * Math.sin(now / 1100 + index) ** 2;
+      fieldContext.globalAlpha = .62 + .28 * Math.sin(now / 1100 + index) ** 2;
       fieldContext.fill();
     });
     fieldContext.globalAlpha = 1;
