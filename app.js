@@ -5,14 +5,18 @@ const menuButton = document.querySelector('.menu-toggle');
 const nav = document.querySelector('.main-nav');
 const videoDialog = document.querySelector('#profile-video');
 const introVideo = document.querySelector('#intro-video');
+const videoStatus = document.querySelector('#video-status');
 
 document.querySelectorAll('[data-open-video]').forEach((trigger) => trigger.addEventListener('click', () => {
   const mobile = window.matchMedia('(max-width: 640px)').matches;
   videoDialog.classList.toggle('portrait-video', mobile);
-  introVideo.src = mobile ? 'assets/alexandre_vertical.mp4' : 'assets/alexandre_horizontal.mp4';
-  introVideo.load();
   videoDialog.showModal();
-  introVideo.play().catch(() => {});
+  videoStatus.hidden = introVideo.readyState >= 2;
+  if (introVideo.readyState === 0) introVideo.load();
+  introVideo.play().catch(() => {
+    videoStatus.textContent = 'Toque no vídeo para iniciar.';
+    videoStatus.hidden = false;
+  });
 }));
 document.querySelector('[data-close-video]').addEventListener('click', () => videoDialog.close());
 videoDialog.addEventListener('click', (event) => {
@@ -20,9 +24,17 @@ videoDialog.addEventListener('click', (event) => {
 });
 videoDialog.addEventListener('close', () => {
   introVideo.pause();
-  introVideo.removeAttribute('src');
-  introVideo.load();
   videoDialog.classList.remove('portrait-video');
+});
+introVideo.addEventListener('loadeddata', () => { videoStatus.hidden = true; });
+introVideo.addEventListener('playing', () => { videoStatus.hidden = true; });
+introVideo.addEventListener('waiting', () => {
+  videoStatus.textContent = 'Carregando o vídeo…';
+  videoStatus.hidden = false;
+});
+introVideo.addEventListener('error', () => {
+  videoStatus.textContent = 'Não foi possível carregar o vídeo. Verifique sua conexão e tente novamente.';
+  videoStatus.hidden = false;
 });
 
 function updateScrollState() {
@@ -124,6 +136,7 @@ function makeTargets() {
 }
 
 function resizeField() {
+  if (animationFrame) cancelAnimationFrame(animationFrame);
   const rect = canvas.getBoundingClientRect();
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   width = rect.width;
@@ -146,12 +159,13 @@ function resizeField() {
   });
   phaseStart = performance.now();
   if (reduceMotion) drawStill();
+  else animationFrame = requestAnimationFrame(draw);
 }
 
 function easeInOut(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
 
 function currentPosition(particle, now) {
-  const local = (now - phaseStart) / phaseDuration;
+  const local = Math.max(0, (now - phaseStart) / phaseDuration);
   const index = Math.floor(local) % 6;
   const t = easeInOut(Math.min(1, local % 1));
   const from = particle.targets[index];
@@ -212,8 +226,11 @@ function drawStill() {
 }
 
 resizeField();
-if (!reduceMotion) animationFrame = requestAnimationFrame(draw);
-window.addEventListener('resize', resizeField, { passive: true });
+let resizeTimer = 0;
+window.addEventListener('resize', () => {
+  window.clearTimeout(resizeTimer);
+  resizeTimer = window.setTimeout(resizeField, 120);
+}, { passive: true });
 
 document.addEventListener('visibilitychange', () => {
   if (reduceMotion) return;
@@ -280,7 +297,7 @@ function startLibraryParticles() {
       }
       fieldContext.beginPath();
       fieldContext.arc(position.x, position.y, fieldPoints[index].radius, 0, Math.PI * 2);
-      fieldContext.fillStyle = fieldPoints[index].color;
+      fieldContext.fillStyle = ['#071739', '#A68868', '#4B6382', '#A4B5C4'][index % 4];
       fieldContext.globalAlpha = .55 + .4 * Math.sin(now / 700 + index) ** 2;
       fieldContext.fill();
     });
