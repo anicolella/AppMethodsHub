@@ -247,7 +247,17 @@ function startLibraryParticles() {
   let fieldHeight = 0;
   let fieldPoints = [];
   let fieldStart = performance.now();
-  const labels = ['OBSERVAR', 'PERGUNTAR', 'ORGANIZAR EVIDÊNCIAS', 'MODELAR'];
+  let libraryFrame = 0;
+  let libraryResizeTimer = 0;
+  const labels = ['FORMULAR A PERGUNTA', 'EXPLORAR POSSIBILIDADES', 'DEIXAR ESPAÇO', 'FORMAR UMA IDEIA'];
+
+  function cubicPoint(start, controlA, controlB, end, t) {
+    const inverse = 1 - t;
+    return {
+      x: inverse ** 3 * start.x + 3 * inverse ** 2 * t * controlA.x + 3 * inverse * t ** 2 * controlB.x + t ** 3 * end.x,
+      y: inverse ** 3 * start.y + 3 * inverse ** 2 * t * controlA.y + 3 * inverse * t ** 2 * controlB.y + t ** 3 * end.y
+    };
+  }
 
   function resizeLibraryField() {
     const rect = field.getBoundingClientRect();
@@ -257,7 +267,7 @@ function startLibraryParticles() {
     field.width = Math.round(fieldWidth * dpr);
     field.height = Math.round(fieldHeight * dpr);
     fieldContext.setTransform(dpr, 0, 0, dpr, 0, 0);
-    fieldPoints = Array.from({ length: Math.max(32, Math.round(fieldWidth / 8)) }, (_, i) => ({
+    fieldPoints = Array.from({ length: Math.max(54, Math.min(78, Math.round(fieldWidth / 6))) }, (_, i) => ({
       scatterX: 22 + Math.random() * Math.max(1, fieldWidth - 44),
       scatterY: 20 + Math.random() * Math.max(1, fieldHeight - 58),
       radius: i % 7 === 0 ? 2.5 : 1.4 + Math.random(),
@@ -268,18 +278,54 @@ function startLibraryParticles() {
 
   function libraryTarget(point, index, phase) {
     const t = index / Math.max(1, fieldPoints.length - 1);
-    if (phase === 0) return { x: point.scatterX, y: point.scatterY };
-    if (phase === 1) return { x: fieldWidth * .5 + (point.scatterX - fieldWidth * .5) * .38, y: fieldHeight * .46 + (point.scatterY - fieldHeight * .5) * .48 };
-    if (phase === 2) return { x: 24 + t * (fieldWidth - 48), y: fieldHeight * (.7 - .43 * Math.sin(t * Math.PI)) + ((index % 4) - 1.5) * 4 };
-    return { x: 24 + t * (fieldWidth - 48), y: fieldHeight * (.76 - .5 * t) + ((index % 3) - 1) * 4 };
+    const centerX = fieldWidth * .5;
+    if (phase === 0) {
+      if (t < .85) {
+        const q = t / .85;
+        if (q < .55) return cubicPoint(
+          { x: fieldWidth * .35, y: fieldHeight * .31 },
+          { x: fieldWidth * .35, y: fieldHeight * .08 },
+          { x: fieldWidth * .68, y: fieldHeight * .08 },
+          { x: fieldWidth * .68, y: fieldHeight * .31 },
+          q / .55
+        );
+        return cubicPoint(
+          { x: fieldWidth * .68, y: fieldHeight * .31 },
+          { x: fieldWidth * .68, y: fieldHeight * .49 },
+          { x: fieldWidth * .51, y: fieldHeight * .46 },
+          { x: fieldWidth * .51, y: fieldHeight * .63 },
+          (q - .55) / .45
+        );
+      }
+      const dotAngle = (t - .85) / .15 * Math.PI * 2;
+      return { x: fieldWidth * .51 + Math.cos(dotAngle) * 5, y: fieldHeight * .77 + Math.sin(dotAngle) * 5 };
+    }
+    if (phase === 1) return { x: point.scatterX, y: point.scatterY };
+    if (phase === 2) return { x: centerX + (point.scatterX - centerX) * .12, y: fieldHeight * .48 + (point.scatterY - fieldHeight * .48) * .12 };
+    if (t < .62) {
+      const angle = Math.PI * .72 + (t / .62) * Math.PI * 1.56;
+      return { x: centerX + Math.cos(angle) * fieldWidth * .19, y: fieldHeight * .38 + Math.sin(angle) * fieldHeight * .23 };
+    }
+    if (t < .78) {
+      const neck = (t - .62) / .16;
+      const side = index % 2 === 0 ? -1 : 1;
+      return { x: centerX + side * fieldWidth * (.11 - neck * .045), y: fieldHeight * (.52 + neck * .16) };
+    }
+    if (t < .92) {
+      const base = (t - .78) / .14;
+      return { x: centerX + (base - .5) * fieldWidth * .18, y: fieldHeight * (.7 + (index % 3) * .035) };
+    }
+    const ray = (t - .92) / .08 * Math.PI * 1.35 + Math.PI * .82;
+    return { x: centerX + Math.cos(ray) * fieldWidth * .3, y: fieldHeight * .36 + Math.sin(ray) * fieldHeight * .34 };
   }
 
   function drawLibrary(now) {
-    const duration = 1900;
-    const elapsed = (now - fieldStart) / duration;
+    const duration = 3200;
+    const elapsed = Math.max(0, (now - fieldStart) / duration);
     const phase = Math.floor(elapsed) % 4;
     const next = (phase + 1) % 4;
-    const mix = easeInOut(elapsed % 1);
+    const phaseProgress = elapsed % 1;
+    const mix = easeInOut(Math.min(1, Math.max(0, (phaseProgress - .55) / .45)));
     label.textContent = labels[phase];
     fieldContext.clearRect(0, 0, fieldWidth, fieldHeight);
     const positions = fieldPoints.map((point, index) => {
@@ -288,7 +334,7 @@ function startLibraryParticles() {
       return { x: a.x + (b.x - a.x) * mix, y: a.y + (b.y - a.y) * mix };
     });
     positions.forEach((position, index) => {
-      if (index && phase > 1) {
+      if (index && phase === 3 && Math.hypot(position.x - positions[index - 1].x, position.y - positions[index - 1].y) < fieldWidth * .16) {
         fieldContext.beginPath();
         fieldContext.moveTo(positions[index - 1].x, positions[index - 1].y);
         fieldContext.lineTo(position.x, position.y);
@@ -298,16 +344,24 @@ function startLibraryParticles() {
       fieldContext.beginPath();
       fieldContext.arc(position.x, position.y, fieldPoints[index].radius, 0, Math.PI * 2);
       fieldContext.fillStyle = ['#071739', '#A68868', '#4B6382', '#A4B5C4'][index % 4];
-      fieldContext.globalAlpha = .55 + .4 * Math.sin(now / 700 + index) ** 2;
+      const quietAlpha = phase === 2 ? .12 + Math.abs(mix - .5) * .42 : .62;
+      fieldContext.globalAlpha = quietAlpha + .25 * Math.sin(now / 1100 + index) ** 2;
       fieldContext.fill();
     });
     fieldContext.globalAlpha = 1;
-    if (!reduceMotion) requestAnimationFrame(drawLibrary);
+    if (!reduceMotion) libraryFrame = requestAnimationFrame(drawLibrary);
   }
 
   resizeLibraryField();
-  if (reduceMotion) drawLibrary(fieldStart); else requestAnimationFrame(drawLibrary);
-  window.addEventListener('resize', resizeLibraryField, { passive: true });
+  if (reduceMotion) drawLibrary(fieldStart); else libraryFrame = requestAnimationFrame(drawLibrary);
+  window.addEventListener('resize', () => {
+    window.clearTimeout(libraryResizeTimer);
+    libraryResizeTimer = window.setTimeout(() => {
+      if (libraryFrame) cancelAnimationFrame(libraryFrame);
+      resizeLibraryField();
+      if (!reduceMotion) libraryFrame = requestAnimationFrame(drawLibrary);
+    }, 120);
+  }, { passive: true });
 }
 
 startLibraryParticles();
